@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Outside v2</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+-webkit-tap-highlight-color:transparent;
+}
+
+:root{
+--bg:#040504;
+--glass:rgba(255,255,255,.07);
+--line:rgba(255,255,255,.12);
+--text:#f5fff5;
+--muted:rgba(245,255,245,.58);
+--green:#bbff66;
+--green2:#70ffb8;
+}
+
+body{
+background:var(--bg);
+color:var(--text);
+min-height:100vh;
+overflow-x:hidden;
+}
+
+body:before{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at top left,rgba(187,255,102,.22),transparent 30%),
+radial-gradient(circle at bottom right,rgba(112,255,184,.12),transparent 28%),
+linear-gradient(#050705,#040504);
+z-index:-2;
+}
+
+body:after{
+content:"";
+position:fixed;
+inset:0;
+background-image:
+linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+background-size:36px 36px;
+mask-image:linear-gradient(to bottom,black,transparent 80%);
+z-index:-1;
+}
+
+.app{
+max-width:430px;
+margin:auto;
+padding:20px 16px 110px;
+min-height:100vh;
+}
+
+.screen{
+display:none;
+animation:fade .25s ease;
+}
+
+.screen.active{
+display:block;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(12px);
+}
+to{
+opacity:1;
+transform:none;
+}
+}
+
+.glass{
+background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.04));
+border:1px solid var(--line);
+backdrop-filter:blur(26px) saturate(170%);
+-webkit-backdrop-filter:blur(26px) saturate(170%);
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,.18),
+0 18px 50px rgba(0,0,0,.4);
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+font-weight:900;
+letter-spacing:-.6px;
+}
+
+.logoIcon{
+width:40px;
+height:40px;
+border-radius:16px;
+display:grid;
+place-items:center;
+background:linear-gradient(135deg,var(--green),var(--green2));
+color:#041004;
+box-shadow:0 0 35px rgba(187,255,102,.25);
+}
+
+.pill{
+padding:9px 14px;
+border-radius:999px;
+font-size:13px;
+color:var(--muted);
+}
+
+.hero{
+padding-top:40px;
+text-align:center;
+}
+
+.orb{
+width:180px;
+height:180px;
+border-radius:50%;
+margin:26px auto;
+display:grid;
+place-items:center;
+font-size:70px;
+background:
+radial-gradient(circle at 35% 30%,#fff,transparent 10%),
+radial-gradient(circle,var(--green),var(--green2));
+box-shadow:0 0 90px rgba(187,255,102,.3);
+animation:float 4s infinite ease-in-out;
+}
+
+@keyframes float{
+50%{
+transform:translateY(-10px);
+}
+}
+
+h1{
+font-size:48px;
+line-height:.92;
+letter-spacing:-2px;
+margin-bottom:12px;
+}
+
+h2{
+font-size:30px;
+letter-spacing:-1px;
+margin-bottom:8px;
+}
+
+h3{
+font-size:18px;
+margin-bottom:8px;
+}
+
+p,small{
+color:var(--muted);
+line-height:1.45;
+}
+
+.panel{
+padding:22px;
+border-radius:32px;
+margin:14px 0;
+}
+
+input{
+width:100%;
+padding:17px;
+margin:8px 0;
+border-radius:22px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.06);
+color:white;
+font-size:16px;
+outline:none;
+}
+
+input:focus{
+border-color:rgba(187,255,102,.7);
+box-shadow:0 0 0 4px rgba(187,255,102,.1);
+}
+
+button{
+width:100%;
+padding:16px;
+border:none;
+border-radius:999px;
+margin-top:12px;
+font-size:15px;
+font-weight:900;
+background:linear-gradient(135deg,var(--green),var(--green2));
+color:#041004;
+box-shadow:
+0 0 35px rgba(187,255,102,.22),
+inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+button.alt{
+background:rgba(255,255,255,.08);
+color:white;
+border:1px solid var(--line);
+box-shadow:none;
+}
+
+button.small{
+width:auto;
+padding:10px 14px;
+margin:0;
+font-size:13px;
+}
+
+.score{
+font-size:76px;
+font-weight:1000;
+letter-spacing:-4px;
+line-height:1;
+}
+
+.score small{
+font-size:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.card{
+padding:18px;
+border-radius:28px;
+min-height:120px;
+}
+
+.card strong{
+font-size:28px;
+display:block;
+margin-top:8px;
+}
+
+.ring{
+width:250px;
+height:250px;
+margin:30px auto;
+border-radius:50%;
+display:grid;
+place-items:center;
+background:
+radial-gradient(circle at center,#061006 48%,transparent 49%),
+conic-gradient(var(--green) 0deg,rgba(255,255,255,.12) 0deg);
+border:1px solid var(--line);
+box-shadow:
+0 0 80px rgba(187,255,102,.18),
+inset 0 0 50px rgba(255,255,255,.04);
+}
+
+.timer{
+font-size:56px;
+font-weight:1000;
+letter-spacing:-2px;
+color:var(--green);
+}
+
+.mission{
+padding:16px;
+border-radius:24px;
+margin:10px 0;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+}
+
+.friend{
+padding:14px 0;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.friend:last-child{
+border:none;
+}
+
+.left{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.avatar{
+width:46px;
+height:46px;
+border-radius:18px;
+display:grid;
+place-items:center;
+font-weight:900;
+background:linear-gradient(135deg,var(--green),var(--green2));
+color:#041004;
+}
+
+.week{
+display:flex;
+gap:8px;
+overflow:auto;
+padding-top:8px;
+}
+
+.day{
+min-width:46px;
+height:68px;
+border-radius:22px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+gap:6px;
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.08);
+}
+
+.day.active{
+background:linear-gradient(135deg,var(--green),var(--green2));
+color:#041004;
+}
+
+.nav{
+position:fixed;
+bottom:12px;
+left:50%;
+transform:translateX(-50%);
+width:min(390px,calc(100% - 24px));
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:6px;
+padding:8px;
+border-radius:999px;
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.15);
+backdrop-filter:blur(30px);
+}
+
+.nav button{
+margin:0;
+padding:12px 0;
+background:transparent;
+box-shadow:none;
+color:var(--muted);
+font-size:12px;
+}
+
+.nav button.active{
+background:rgba(187,255,102,.15);
+color:var(--green);
+}
+
+.empty{
+padding:30px 20px;
+border-radius:28px;
+text-align:center;
+border:1px dashed rgba(255,255,255,.16);
+background:rgba(255,255,255,.03);
+margin:14px 0;
+}
+
+.toast{
+position:fixed;
+top:18px;
+left:50%;
+transform:translateX(-50%);
+padding:12px 18px;
+border-radius:999px;
+display:none;
+z-index:20;
+}
+
+.center{
+text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="toast glass" id="toast"></div>
+
+<div class="app">
+
+<section id="welcome" class="screen active">
+
+<div class="top">
+<div class="logo">
+<div class="logoIcon">🌱</div>
+Outside
+</div>
+
+<div class="pill glass">
+v2
+</div>
+</div>
+
+<div class="hero">
+
+<div class="orb">
+☀️
+</div>
+
+<h1>
+Less phone.<br>
+More life.
+</h1>
+
+<p>
+A minimalist social detox app with real streaks and real friends.
+</p>
+
+<button onclick="show('signup')">
+Create Account
+</button>
+
+<button class="alt" onclick="show('login')">
+Log In
+</button>
+
+</div>
+
+</section>
+
+<section id="signup" class="screen">
+
+<div class="top">
+<div class="logo">
+<div class="logoIcon">🌱</div>
+Setup
+</div>
+</div>
+
+<h1>
+Build your profile.
+</h1>
+
+<p>
+Your progress stays locally on your phone.
+</p>
+
+<div class="panel glass">
+
+<input id="signupName" placeholder="Username">
+
+<input id="signupEmail" placeholder="Email">
+
+<input id="signupPass" type="password" placeholder="Password">
+
+<button onclick="signup()">
+Start
+</button>
+
+</div>
+
+<button class="alt" onclick="show('login')">
+Already joined
+</button>
+
+</section>
+
+<section id="login" class="screen">
+
+<div class="top">
+<div class="logo">
+<div class="logoIcon">🌱</div>
+Login
+</div>
+</div>
+
+<h1>
+Welcome back.
+</h1>
+
+<p>
+Use your saved username.
+</p>
+
+<div class="panel glass">
+
+<input id="loginName" placeholder="Username">
+
+<button onclick="login()">
+Enter App
+</button>
+
+</div>
+
+</section>
+
+<section id="home" class="screen">
+
+<div class="top">
+
+<div>
+<small>Today</small>
+<h2 id="hello">
+Hey
+</h2>
+</div>
+
+<div class="pill glass" id="scorePill">
+0 pts
+</div>
+
+</div>
+
+<div class="panel glass">
+
+<small>Current streak</small>
+
+<div class="score">
+<span id="streak">
+0
+</span>
+<small>days</small>
+</div>
+
+<p id="streakText">
+Start your first session.
+</p>
+
+<button onclick="show('focus')">
+Begin Session
+</button>
+
+</div>
+
+<div class="grid">
+
+<div class="card glass">
+<small>Offline</small>
+<strong id="offline">
+0m
+</strong>
+</div>
+
+<div class="card glass">
+<small>Grass Score</small>
+<strong id="grassScore">
+0
+</strong>
+</div>
+
+</div>
+
+<div class="panel glass">
+
+<h3>
+Week
+</h3>
+
+<div class="week" id="week">
+</div>
+
+</div>
+
+<div class="panel glass">
+
+<h3>
+Daily Missions
+</h3>
+
+<div id="missions">
+</div>
+
+</div>
+
+</section>
+
+<section id="focus" class="screen">
+
+<div class="top">
+
+<div class="logo">
+<div class="logoIcon">⏳</div>
+Focus
+</div>
+
+<div class="pill glass">
+10 min
+</div>
+
+</div>
+
+<h1>
+Put it down.
+</h1>
+
+<p>
+Complete the session to earn points.
+</p>
+
+<div class="ring" id="ring">
+
+<div class="timer" id="timer">
+10:00
+</div>
+
+</div>
+
+<button onclick="startSession()">
+Start Session
+</button>
+
+<button class="alt" onclick="completeSession()">
+Finish Early
+</button>
+
+<button class="alt" onclick="cancelSession()">
+Cancel
+</button>
+
+</section>
+
+<section id="squad" class="screen">
+
+<div class="top">
+
+<div>
+<small>Squad</small>
+<h2>
+Friends
+</h2>
+</div>
+
+<div class="pill glass" id="friendCount">
+0
+</div>
+
+</div>
+
+<div class="panel glass">
+
+<input id="friendInput" placeholder="Friend username">
+
+<button onclick="addFriend()">
+Add Friend
+</button>
+
+</div>
+
+<div id="friendsList">
+</div>
+
+</section>
+
+<section id="stats" class="screen">
+
+<div class="top">
+
+<div>
+<small>Progress</small>
+<h2>
+Stats
+</h2>
+</div>
+
+</div>
+
+<div class="grid">
+
+<div class="card glass">
+<small>Best</small>
+<strong id="best">
+0
+</strong>
+</div>
+
+<div class="card glass">
+<small>Sessions</small>
+<strong id="sessions">
+0
+</strong>
+</div>
+
+<div class="card glass">
+<small>Points</small>
+<strong id="points">
+0
+</strong>
+</div>
+
+<div class="card glass">
+<small>Offline</small>
+<strong id="offline2">
+0m
+</strong>
+</div>
+
+</div>
+
+<div class="panel glass">
+
+<h3>
+Achievements
+</h3>
+
+<p>
+🌱 First Session
+</p>
+
+<p>
+🔥 7 Day Streak
+</p>
+
+<p>
+🌳 14 Days
+</p>
+
+<p>
+🏆 30 Days
+</p>
+
+</div>
+
+</section>
+
+<section id="profile" class="screen">
+
+<div class="panel glass center">
+
+<div class="avatar" id="avatar" style="width:90px;height:90px;font-size:36px;margin:auto;">
+A
+</div>
+
+<h1 id="profileName">
+@user
+</h1>
+
+<p>
+Local profile
+</p>
+
+</div>
+
+<div class="panel glass">
+
+<p>
+Email:
+<strong id="profileEmail">
+none
+</strong>
+</p>
+
+<p>
+Friends:
+<strong id="profileFriends">
+0
+</strong>
+</p>
+
+<p>
+Grass Score:
+<strong id="profileScore">
+0
+</strong>
+</p>
+
+</div>
+
+<button class="alt" onclick="logout()">
+Log Out
+</button>
+
+<button class="alt" onclick="resetApp()">
+Reset App
+</button>
+
+</section>
+
+<nav class="nav" id="nav" style="display:none">
+
+<button id="nav-home" onclick="show('home')">
+Home
+</button>
+
+<button id="nav-focus" onclick="show('focus')">
+Focus
+</button>
+
+<button id="nav-squad" onclick="show('squad')">
+Squad
+</button>
+
+<button id="nav-stats" onclick="show('stats')">
+Stats
+</button>
+
+<button id="nav-profile" onclick="show('profile')">
+Me
+</button>
+
+</nav>
+
+</div>
+
+<script>
+
+let data=JSON.parse(localStorage.getItem("outsidev2"))||null;
+
+let secondsLeft=600;
+
+let interval=null;
+
+const missionsData=[
+"Spend 10 mins outside",
+"No TikTok before noon",
+"Walk without headphones",
+"Read for 15 mins"
+];
+
+function save(){
+localStorage.setItem("outsidev2",JSON.stringify(data));
+}
+
+function toast(msg){
+const t=document.getElementById("toast");
+t.innerHTML=msg;
+t.style.display="block";
+setTimeout(()=>{
+t.style.display="none";
+},1600);
+}
+
+function show(id){
+
+document.querySelectorAll(".screen").forEach(s=>{
+s.classList.remove("active");
+});
+
+document.getElementById(id).classList.add("active");
+
+document.getElementById("nav").style.display=data?"grid":"none";
+
+document.querySelectorAll(".nav button").forEach(b=>{
+b.classList.remove("active");
+});
+
+const btn=document.getElementById("nav-"+id);
+
+if(btn){
+btn.classList.add("active");
+}
+
+if(data){
+render();
+}
+
+window.scrollTo(0,0);
+
+}
+
+function signup(){
+
+const username=document.getElementById("signupName").value.trim();
+
+const email=document.getElementById("signupEmail").value.trim();
+
+if(!username){
+return toast("Enter username");
+}
+
+data={
+username,
+email,
+streak:0,
+best:0,
+offline:0,
+points:0,
+sessions:0,
+friends:[],
+score:0
+};
+
+save();
+
+toast("Profile created");
+
+show("home");
+
+}
+
+function login(){
+
+if(!data){
+return toast("No profile found");
+}
+
+const username=document.getElementById("loginName").value.trim();
+
+if(username&&username!==data.username){
+return toast("Wrong username");
+}
+
+show("home");
+
+}
+
+function logout(){
+show("welcome");
+}
+
+function resetApp(){
+
+if(confirm("Delete all data?")){
+
+localStorage.removeItem("outsidev2");
+
+data=null;
+
+show("welcome");
+
+}
+
+}
+
+function startSession(){
+
+clearInterval(interval);
+
+secondsLeft=600;
+
+updateTimer();
+
+interval=setInterval(()=>{
+
+secondsLeft--;
+
+updateTimer();
+
+if(secondsLeft<=0){
+
+completeSession();
+
+}
+
+},1000);
+
+toast("Session started");
+
+}
+
+function updateTimer(){
+
+const m=Math.floor(secondsLeft/60);
+
+const s=secondsLeft%60;
+
+document.getElementById("timer").innerHTML=
+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+
+const progress=(600-secondsLeft)/600*360;
+
+document.getElementById("ring").style.background=
+`radial-gradient(circle at center,#061006 48%,transparent 49%),conic-gradient(var(--green) ${progress}deg,rgba(255,255,255,.12) 0deg)`;
+
+}
+
+function cancelSession(){
+
+clearInterval(interval);
+
+secondsLeft=600;
+
+updateTimer();
+
+toast("Cancelled");
+
+}
+
+function completeSession(){
+
+clearInterval(interval);
+
+if(!data)return;
+
+data.offline+=10;
+
+data.points+=25;
+
+data.sessions+=1;
+
+data.streak+=1;
+
+if(data.streak>data.best){
+
+data.best=data.streak;
+
+}
+
+data.score=Math.floor(
+data.points/2+
+data.offline+
+data.streak*5
+);
+
+save();
+
+render();
+
+toast("+25 points");
+
+show("home");
+
+}
+
+function addFriend(){
+
+const input=document.getElementById("friendInput");
+
+const name=input.value.trim();
+
+if(!name){
+return toast("Enter username");
+}
+
+if(data.friends.includes(name)){
+return toast("Already added");
+}
+
+data.friends.push(name);
+
+input.value="";
+
+save();
+
+render();
+
+toast("Friend added");
+
+}
+
+function render(){
+
+if(!data)return;
+
+hello.innerHTML="Hey, "+data.username;
+
+scorePill.innerHTML=data.points+" pts";
+
+streak.innerHTML=data.streak;
+
+offline.innerHTML=data.offline+"m";
+
+offline2.innerHTML=data.offline+"m";
+
+grassScore.innerHTML=data.score;
+
+best.innerHTML=data.best;
+
+points.innerHTML=data.points;
+
+sessions.innerHTML=data.sessions;
+
+friendCount.innerHTML=data.friends.length;
+
+profileName.innerHTML="@"+data.username;
+
+profileEmail.innerHTML=data.email||"none";
+
+profileFriends.innerHTML=data.friends.length;
+
+profileScore.innerHTML=data.score;
+
+avatar.innerHTML=data.username[0].toUpperCase();
+
+streakText.innerHTML=
+data.streak===0?
+"Start your first session.":
+"Momentum is building.";
+
+week.innerHTML="";
+
+["M","T","W","T","F","S","S"].forEach((d,i)=>{
+
+week.innerHTML+=`
+<div class="day ${i<data.streak?"active":""}">
+<strong>${d}</strong>
+<small>${i<data.streak?"✓":"•"}</small>
+</div>
+`;
+
+});
+
+missions.innerHTML="";
+
+missionsData.forEach(m=>{
+
+missions.innerHTML+=`
+<div class="mission glass">
+<div>
+<strong>${m}</strong>
+<p>+15 pts</p>
+</div>
+<button class="small">
+Done
+</button>
+</div>
+`;
+
+});
+
+if(data.friends.length===0){
+
+friendsList.innerHTML=`
+<div class="empty">
+<h3>No squad yet</h3>
+<p>Add real friends to build accountability.</p>
+</div>
+`;
+
+}else{
+
+friendsList.innerHTML=data.friends.map(name=>`
+<div class="friend">
+<div class="left">
+<div class="avatar">
+${name[0].toUpperCase()}
+</div>
+<div>
+<strong>@${name}</strong>
+<p>Added friend</p>
+</div>
+</div>
+
+<button class="small alt" onclick="removeFriend('${name}')">
+Remove
+</button>
+
+</div>
+`).join("");
+
+}
+
+}
+
+function removeFriend(name){
+
+data.friends=data.friends.filter(f=>f!==name);
+
+save();
+
+render();
+
+}
+
+if(data){
+
+show("home");
+
+}else{
+
+show("welcome");
+
+}
+
+</script>
+
+</body>
+</html>
