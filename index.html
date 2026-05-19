@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Signal</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+-webkit-tap-highlight-color:transparent;
+}
+
+:root{
+--bg:#000;
+--card:#0f0f10;
+--border:#1b1b1d;
+--text:#f5f5f7;
+--muted:#8f8f95;
+--accent:#fff;
+--like:#ff3b5c;
+}
+
+body{
+background:var(--bg);
+color:var(--text);
+min-height:100vh;
+overflow-x:hidden;
+}
+
+.app{
+max-width:620px;
+margin:auto;
+padding-bottom:90px;
+}
+
+.screen{
+display:none;
+animation:fade .2s ease;
+}
+
+.screen.active{
+display:block;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(8px);
+}
+to{
+opacity:1;
+transform:none;
+}
+}
+
+.top{
+position:sticky;
+top:0;
+z-index:50;
+background:rgba(0,0,0,.82);
+backdrop-filter:blur(20px);
+padding:14px 16px;
+border-bottom:1px solid var(--border);
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.logo{
+font-size:24px;
+font-weight:900;
+letter-spacing:-1px;
+}
+
+.iconBtn{
+width:42px;
+height:42px;
+border-radius:14px;
+border:1px solid var(--border);
+background:#111;
+color:white;
+font-size:18px;
+}
+
+.hero{
+padding:80px 24px;
+text-align:center;
+}
+
+.hero h1{
+font-size:64px;
+line-height:.9;
+letter-spacing:-3px;
+margin-bottom:16px;
+}
+
+.hero p{
+color:var(--muted);
+line-height:1.5;
+max-width:340px;
+margin:auto;
+}
+
+.auth{
+padding:18px;
+display:grid;
+gap:12px;
+}
+
+input,textarea{
+width:100%;
+padding:16px;
+background:#0d0d0f;
+border:1px solid var(--border);
+border-radius:18px;
+color:white;
+outline:none;
+font-size:16px;
+}
+
+textarea{
+min-height:120px;
+resize:none;
+}
+
+button{
+border:none;
+background:white;
+color:black;
+padding:15px;
+border-radius:999px;
+font-weight:800;
+font-size:15px;
+}
+
+button.secondary{
+background:#111;
+color:white;
+border:1px solid var(--border);
+}
+
+.feed{
+display:grid;
+}
+
+.post{
+padding:18px 16px;
+border-bottom:1px solid var(--border);
+}
+
+.postTop{
+display:flex;
+gap:12px;
+}
+
+.avatar{
+width:46px;
+height:46px;
+border-radius:50%;
+background:#222;
+display:grid;
+place-items:center;
+font-weight:900;
+font-size:18px;
+overflow:hidden;
+flex-shrink:0;
+}
+
+.avatar img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.postContent{
+flex:1;
+}
+
+.nameRow{
+display:flex;
+align-items:center;
+gap:6px;
+flex-wrap:wrap;
+}
+
+.name{
+font-weight:800;
+}
+
+.user{
+color:var(--muted);
+font-size:14px;
+}
+
+.time{
+color:var(--muted);
+font-size:13px;
+}
+
+.postText{
+margin-top:6px;
+line-height:1.5;
+white-space:pre-wrap;
+word-break:break-word;
+}
+
+.postImage{
+width:100%;
+border-radius:20px;
+margin-top:12px;
+border:1px solid var(--border);
+max-height:420px;
+object-fit:cover;
+}
+
+.postActions{
+display:flex;
+gap:18px;
+margin-top:14px;
+}
+
+.action{
+background:none;
+padding:0;
+color:var(--muted);
+font-size:14px;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.action.liked{
+color:var(--like);
+}
+
+.composer{
+padding:16px;
+border-bottom:1px solid var(--border);
+display:flex;
+gap:12px;
+}
+
+.composerMain{
+flex:1;
+}
+
+.composerBottom{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-top:10px;
+}
+
+.nav{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:rgba(0,0,0,.94);
+backdrop-filter:blur(20px);
+border-top:1px solid var(--border);
+display:grid;
+grid-template-columns:repeat(4,1fr);
+padding:10px;
+z-index:60;
+}
+
+.nav button{
+background:none;
+color:var(--muted);
+padding:10px 0;
+font-size:12px;
+display:grid;
+gap:4px;
+place-items:center;
+}
+
+.nav button.active{
+color:white;
+}
+
+.big{
+font-size:20px;
+}
+
+.profile{
+padding:24px 18px;
+}
+
+.profileTop{
+display:flex;
+align-items:center;
+gap:16px;
+}
+
+.profile .avatar{
+width:80px;
+height:80px;
+font-size:32px;
+}
+
+.stats{
+display:flex;
+gap:18px;
+margin-top:16px;
+}
+
+.stat strong{
+display:block;
+font-size:18px;
+}
+
+.stat small{
+color:var(--muted);
+}
+
+.bio{
+margin-top:10px;
+color:var(--muted);
+line-height:1.5;
+}
+
+.replyBox{
+margin-top:12px;
+display:none;
+gap:8px;
+}
+
+.reply{
+margin-top:10px;
+padding:10px 12px;
+background:#0d0d0f;
+border-radius:16px;
+border:1px solid var(--border);
+}
+
+.reply small{
+color:var(--muted);
+display:block;
+margin-bottom:4px;
+}
+
+.toast{
+position:fixed;
+top:18px;
+left:50%;
+transform:translateX(-50%);
+background:#111;
+border:1px solid var(--border);
+padding:12px 18px;
+border-radius:999px;
+display:none;
+z-index:999;
+}
+
+.empty{
+padding:60px 24px;
+text-align:center;
+color:var(--muted);
+}
+
+.followBtn{
+margin-top:14px;
+width:auto;
+padding:10px 16px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="app">
+
+<section id="welcome" class="screen active">
+
+<div class="hero">
+
+<h1>
+Signal
+</h1>
+
+<p>
+A simple social app.
+</p>
+
+<div class="auth">
+
+<button onclick="show('signup')">
+Create Account
+</button>
+
+<button class="secondary" onclick="show('login')">
+Log In
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="signup" class="screen">
+
+<div class="top">
+<div class="logo">
+Signal
+</div>
+</div>
+
+<div class="auth">
+
+<input id="signupName" placeholder="Name">
+
+<input id="signupUser" placeholder="Username">
+
+<textarea id="signupBio" placeholder="Bio"></textarea>
+
+<button onclick="signup()">
+Create Account
+</button>
+
+</div>
+
+</section>
+
+<section id="login" class="screen">
+
+<div class="top">
+<div class="logo">
+Signal
+</div>
+</div>
+
+<div class="auth">
+
+<input id="loginUser" placeholder="Username">
+
+<button onclick="login()">
+Enter
+</button>
+
+</div>
+
+</section>
+
+<section id="home" class="screen">
+
+<div class="top">
+<div class="logo">
+Signal
+</div>
+
+<button class="iconBtn" onclick="logout()">
+↩
+</button>
+</div>
+
+<div class="composer">
+
+<div id="composerAvatar" class="avatar">
+?
+</div>
+
+<div class="composerMain">
+
+<textarea id="postText" placeholder="What's happening?" maxlength="280"></textarea>
+
+<div class="composerBottom">
+
+<label>
+<input id="postImage" type="file" accept="image/*" hidden onchange="pickImage(event)">
+<button type="button" class="secondary">
+Image
+</button>
+</label>
+
+<button onclick="createPost()">
+Post
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="feed" class="feed"></div>
+
+</section>
+
+<section id="search" class="screen">
+
+<div class="top">
+<div class="logo">
+Search
+</div>
+</div>
+
+<div class="auth">
+<input id="searchInput" placeholder="Search users/posts" oninput="renderSearch()">
+</div>
+
+<div id="searchResults"></div>
+
+</section>
+
+<section id="profile" class="screen">
+
+<div class="top">
+<div class="logo">
+Profile
+</div>
+</div>
+
+<div class="profile">
+
+<div class="profileTop">
+
+<div id="profileAvatar" class="avatar">
+?
+</div>
+
+<div>
+
+<h2 id="profileName">
+User
+</h2>
+
+<div class="user" id="profileUser">
+@user
+</div>
+
+</div>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+<strong id="profilePosts">
+0
+</strong>
+<small>Posts</small>
+</div>
+
+<div class="stat">
+<strong id="profileFollowers">
+0
+</strong>
+<small>Followers</small>
+</div>
+
+<div class="stat">
+<strong id="profileFollowing">
+0
+</strong>
+<small>Following</small>
+</div>
+
+</div>
+
+<div class="bio" id="profileBio">
+Bio
+</div>
+
+<button class="secondary followBtn" onclick="resetApp()">
+Reset App
+</button>
+
+</div>
+
+<div id="profileFeed" class="feed"></div>
+
+</section>
+
+<nav id="nav" class="nav" style="display:none">
+
+<button id="nav-home" onclick="show('home')">
+<div class="big">⌂</div>
+Home
+</button>
+
+<button id="nav-search" onclick="show('search')">
+<div class="big">⌕</div>
+Search
+</button>
+
+<button id="nav-profile" onclick="show('profile')">
+<div class="big">◉</div>
+Profile
+</button>
+
+<button onclick="createAiPost()">
+<div class="big">✦</div>
+AI
+</button>
+
+</nav>
+
+</div>
+
+<script>
+
+let db=JSON.parse(localStorage.getItem("signal_db"))||{
+users:{},
+posts:[],
+session:null
+};
+
+let imageData="";
+
+const aiUsers=[
+{
+name:"Milo",
+username:"milo",
+bio:"this app is weirdly addicting",
+followers:120
+},
+{
+name:"Ava",
+username:"ava",
+bio:"minimal apps >",
+followers:421
+},
+{
+name:"Noah",
+username:"noah",
+bio:"posting random thoughts",
+followers:87
+},
+{
+name:"Kai",
+username:"kai",
+bio:"dark mode forever",
+followers:920
+}
+];
+
+const aiThoughts=[
+"new update is actually clean",
+"they need a better search page",
+"this app feels peaceful",
+"way better than scrolling all day",
+"who else uses this at 2am",
+"the black ui is fire",
+"wish there was dms",
+"this app is growing fast",
+"i like how simple this is",
+"people here feel more real"
+];
+
+function save(){
+localStorage.setItem("signal_db",JSON.stringify(db));
+}
+
+function toast(t){
+
+const el=document.getElementById("toast");
+
+el.innerHTML=t;
+
+el.style.display="block";
+
+setTimeout(()=>{
+el.style.display="none";
+},1800);
+
+}
+
+function show(id){
+
+document.querySelectorAll(".screen").forEach(s=>{
+s.classList.remove("active");
+});
+
+document.getElementById(id).classList.add("active");
+
+document.getElementById("nav").style.display=db.session?"grid":"none";
+
+document.querySelectorAll(".nav button").forEach(b=>{
+b.classList.remove("active");
+});
+
+const nav=document.getElementById("nav-"+id);
+
+if(nav){
+nav.classList.add("active");
+}
+
+render();
+
+window.scrollTo(0,0);
+
+}
+
+function signup(){
+
+const name=document.getElementById("signupName").value.trim();
+
+const username=document.getElementById("signupUser").value.trim().toLowerCase();
+
+const bio=document.getElementById("signupBio").value.trim();
+
+if(!name||!username){
+return toast("Fill all fields");
+}
+
+if(db.users[username]){
+return toast("Username taken");
+}
+
+db.users[username]={
+name,
+username,
+bio,
+followers:0,
+following:0,
+ai:false
+};
+
+db.session=username;
+
+createAiUsers();
+
+save();
+
+toast("Account created");
+
+show("home");
+
+}
+
+function login(){
+
+const username=document.getElementById("loginUser").value.trim().toLowerCase();
+
+if(!db.users[username]){
+return toast("User not found");
+}
+
+db.session=username;
+
+save();
+
+toast("Welcome back");
+
+show("home");
+
+}
+
+function logout(){
+
+db.session=null;
+
+save();
+
+show("welcome");
+
+}
+
+function resetApp(){
+
+if(confirm("Delete all data?")){
+
+localStorage.removeItem("signal_db");
+
+location.reload();
+
+}
+
+}
+
+function currentUser(){
+return db.users[db.session];
+}
+
+function avatarHTML(user){
+
+return user.avatar?
+`<div class="avatar"><img src="${user.avatar}"></div>`:
+`<div class="avatar">${user.name[0].toUpperCase()}</div>`;
+
+}
+
+function pickImage(e){
+
+const file=e.target.files[0];
+
+if(!file)return;
+
+const reader=new FileReader();
+
+reader.onload=()=>{
+imageData=reader.result;
+toast("Image added");
+};
+
+reader.readAsDataURL(file);
+
+}
+
+function createPost(){
+
+const text=document.getElementById("postText").value.trim();
+
+if(!text&&!imageData){
+return toast("Write something");
+}
+
+db.posts.unshift({
+id:Date.now(),
+author:db.session,
+text,
+image:imageData,
+likes:[],
+replies:[],
+time:Date.now()
+});
+
+document.getElementById("postText").value="";
+
+imageData="";
+
+save();
+
+render();
+
+toast("Posted");
+
+}
+
+function createAiUsers(){
+
+aiUsers.forEach(user=>{
+
+if(!db.users[user.username]){
+
+db.users[user.username]={
+...user,
+following:Math.floor(Math.random()*120),
+ai:true
+};
+
+}
+
+});
+
+}
+
+function createAiPost(){
+
+const users=Object.values(db.users).filter(u=>u.ai);
+
+if(users.length===0)return;
+
+const user=users[Math.floor(Math.random()*users.length)];
+
+const text=aiThoughts[Math.floor(Math.random()*aiThoughts.length)];
+
+db.posts.unshift({
+id:Date.now()+Math.random(),
+author:user.username,
+text,
+image:"",
+likes:[],
+replies:[],
+time:Date.now()
+});
+
+user.followers+=Math.floor(Math.random()*12);
+
+save();
+
+render();
+
+toast(user.name+" posted");
+
+}
+
+setInterval(()=>{
+
+if(db.session){
+
+if(Math.random()>.45){
+
+createAiPost();
+
+}
+
+}
+
+},18000);
+
+function toggleLike(id){
+
+const post=db.posts.find(p=>p.id==id);
+
+if(!post)return;
+
+const liked=post.likes.includes(db.session);
+
+if(liked){
+
+post.likes=post.likes.filter(l=>l!==db.session);
+
+}else{
+
+post.likes.push(db.session);
+
+}
+
+save();
+
+render();
+
+}
+
+function toggleReply(id){
+
+const box=document.getElementById("reply-"+id);
+
+box.style.display=
+box.style.display==="grid"?
+"none":
+"grid";
+
+}
+
+function addReply(id){
+
+const input=document.getElementById("replyInput-"+id);
+
+const text=input.value.trim();
+
+if(!text)return;
+
+const post=db.posts.find(p=>p.id==id);
+
+post.replies.push({
+user:db.session,
+text
+});
+
+input.value="";
+
+save();
+
+render();
+
+}
+
+function follow(username){
+
+const user=db.users[username];
+
+if(!user)return;
+
+user.followers++;
+
+currentUser().following++;
+
+save();
+
+render();
+
+toast("Followed "+user.name);
+
+}
+
+function render(){
+
+if(!db.session)return;
+
+const user=currentUser();
+
+composerAvatar.outerHTML=avatarHTML(user);
+
+const newAvatar=document.querySelector(".composer .avatar");
+
+newAvatar.id="composerAvatar";
+
+profileAvatar.outerHTML=avatarHTML(user);
+
+const newP=document.querySelector(".profile .avatar");
+
+newP.id="profileAvatar";
+
+profileName.innerHTML=user.name;
+
+profileUser.innerHTML="@"+user.username;
+
+profileBio.innerHTML=user.bio||"No bio";
+
+profileFollowers.innerHTML=user.followers;
+
+profileFollowing.innerHTML=user.following;
+
+const myPosts=db.posts.filter(p=>p.author===db.session);
+
+profilePosts.innerHTML=myPosts.length;
+
+if(db.posts.length===0){
+
+feed.innerHTML=`
+<div class="empty">
+No posts yet
+</div>
+`;
+
+}else{
+
+feed.innerHTML=db.posts.map(post=>{
+
+const author=db.users[post.author];
+
+const liked=post.likes.includes(db.session);
+
+return `
+<div class="post">
+
+<div class="postTop">
+
+${avatarHTML(author)}
+
+<div class="postContent">
+
+<div class="nameRow">
+
+<div class="name">
+${author.name}
+</div>
+
+<div class="user">
+@${author.username}
+</div>
+
+<div class="time">
+· ${timeAgo(post.time)}
+</div>
+
+</div>
+
+<div class="postText">
+${escapeHTML(post.text)}
+</div>
+
+${post.image?
+`<img class="postImage" src="${post.image}">`
+:""}
+
+<div class="postActions">
+
+<button class="action ${liked?"liked":""}" onclick="toggleLike('${post.id}')">
+♥ ${post.likes.length}
+</button>
+
+<button class="action" onclick="toggleReply('${post.id}')">
+↩ ${post.replies.length}
+</button>
+
+${author.username!==db.session?
+`<button class="action" onclick="follow('${author.username}')">
+＋ Follow
+</button>`
+:""}
+
+</div>
+
+<div class="replyBox" id="reply-${post.id}">
+
+<input id="replyInput-${post.id}" placeholder="Reply">
+
+<button onclick="addReply('${post.id}')">
+Reply
+</button>
+
+</div>
+
+${post.replies.map(r=>{
+
+const u=db.users[r.user];
+
+return `
+<div class="reply">
+
+<small>
+${u.name} @${u.username}
+</small>
+
+${escapeHTML(r.text)}
+
+</div>
+`;
+
+}).join("")}
+
+</div>
+
+</div>
+
+</div>
+`;
+
+}).join("");
+
+}
+
+profileFeed.innerHTML=myPosts.map(post=>{
+
+const liked=post.likes.includes(db.session);
+
+return `
+<div class="post">
+
+<div class="postText">
+${escapeHTML(post.text)}
+</div>
+
+<div class="postActions">
+
+<button class="action ${liked?"liked":""}" onclick="toggleLike('${post.id}')">
+♥ ${post.likes.length}
+</button>
+
+</div>
+
+</div>
+`;
+
+}).join("");
+
+}
+
+function renderSearch(){
+
+const q=searchInput.value.toLowerCase();
+
+const users=Object.values(db.users).filter(u=>
+u.name.toLowerCase().includes(q)||
+u.username.toLowerCase().includes(q)
+);
+
+searchResults.innerHTML=users.map(u=>`
+<div class="post">
+
+<div class="postTop">
+
+${avatarHTML(u)}
+
+<div class="postContent">
+
+<div class="name">
+${u.name}
+</div>
+
+<div class="user">
+@${u.username}
+</div>
+
+<div class="bio">
+${u.bio||""}
+</div>
+
+${u.username!==db.session?
+`<button class="secondary followBtn" onclick="follow('${u.username}')">
+Follow
+</button>`
+:""}
+
+</div>
+
+</div>
+
+</div>
+`).join("");
+
+}
+
+function timeAgo(t){
+
+const s=Math.floor((Date.now()-t)/1000);
+
+if(s<60)return s+"s";
+
+if(s<3600)return Math.floor(s/60)+"m";
+
+if(s<86400)return Math.floor(s/3600)+"h";
+
+return Math.floor(s/86400)+"d";
+
+}
+
+function escapeHTML(str){
+
+return String(str)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;");
+
+}
+
+if(db.session){
+
+show("home");
+
+}else{
+
+show("welcome");
+
+}
+
+</script>
+
+</body>
+</html>
