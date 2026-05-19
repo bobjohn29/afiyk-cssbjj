@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Touch Grass</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+:root{
+--bg:#050706;
+--glass:rgba(255,255,255,.08);
+--glass2:rgba(255,255,255,.13);
+--line:rgba(255,255,255,.16);
+--green:#b8ff5a;
+--green2:#72ff9c;
+--text:#f7fff8;
+--muted:rgba(247,255,248,.62);
+}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+body:before{
+content:"";position:fixed;inset:-80px;
+background:
+radial-gradient(circle at 20% 5%,rgba(184,255,90,.28),transparent 28%),
+radial-gradient(circle at 90% 20%,rgba(114,255,156,.18),transparent 25%),
+radial-gradient(circle at 50% 95%,rgba(184,255,90,.12),transparent 30%);
+filter:blur(10px);z-index:-2}
+body:after{
+content:"";position:fixed;inset:0;
+background:linear-gradient(180deg,rgba(255,255,255,.03),transparent 35%,rgba(0,0,0,.3));
+z-index:-1}
+
+.app{max-width:430px;margin:auto;min-height:100vh;padding:22px 18px 105px}
+.screen{display:none;animation:rise .3s ease}
+.screen.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+
+h1{font-size:42px;line-height:.96;letter-spacing:-1.8px;margin-bottom:12px}
+h2{font-size:28px;letter-spacing:-.8px;margin-bottom:10px}
+p,small{color:var(--muted);line-height:1.45}
+
+.logo{font-size:76px;text-align:center;margin:64px 0 16px;filter:drop-shadow(0 0 30px rgba(184,255,90,.45));animation:float 3s infinite ease-in-out}
+@keyframes float{50%{transform:translateY(-8px) scale(1.04)}}
+
+.glass{
+background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.06));
+border:1px solid var(--line);
+box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 18px 50px rgba(0,0,0,.35);
+backdrop-filter:blur(28px) saturate(160%);
+-webkit-backdrop-filter:blur(28px) saturate(160%);
+border-radius:30px;
+}
+
+.card{padding:22px;margin:16px 0}
+.center{text-align:center}
+.green{color:var(--green)}
+.muted{color:var(--muted)}
+
+input{
+width:100%;padding:17px 18px;border-radius:22px;border:1px solid var(--line);
+background:rgba(255,255,255,.07);color:#fff;font-size:16px;margin:8px 0;
+outline:none;backdrop-filter:blur(20px)
+}
+input:focus{border-color:rgba(184,255,90,.7);box-shadow:0 0 0 4px rgba(184,255,90,.12)}
+
+button{
+width:100%;padding:16px 18px;border-radius:999px;margin-top:12px;border:1px solid rgba(255,255,255,.22);
+background:linear-gradient(135deg,rgba(255,255,255,.32),rgba(255,255,255,.08));
+color:white;font-weight:800;font-size:16px;
+box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 14px 34px rgba(0,0,0,.34);
+backdrop-filter:blur(24px) saturate(180%);
+-webkit-backdrop-filter:blur(24px) saturate(180%);
+}
+button.primary{
+color:#071007;
+background:linear-gradient(135deg,rgba(184,255,90,.95),rgba(114,255,156,.65));
+box-shadow:0 0 38px rgba(184,255,90,.24),inset 0 1px 0 rgba(255,255,255,.5)
+}
+button.danger{color:#ff8b8b}
+button.small{width:auto;padding:10px 14px;margin:0;font-size:13px}
+
+.heroPhone{height:230px;margin:28px 0;display:grid;place-items:center;position:relative;overflow:hidden}
+.heroPhone:before{content:"";position:absolute;width:150px;height:190px;border-radius:36px;background:rgba(0,0,0,.35);border:1px solid var(--line);box-shadow:0 0 60px rgba(184,255,90,.18)}
+.heroPhone span{z-index:1;font-size:54px}
+
+.statGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{padding:16px;text-align:center;border-radius:24px}
+.stat strong{display:block;font-size:22px;margin-top:6px}
+
+.bigStreak{font-size:76px;text-align:center;filter:drop-shadow(0 0 24px rgba(184,255,90,.25));animation:pulse 1.8s infinite}
+@keyframes pulse{50%{transform:scale(1.07)}}
+
+.timer{font-size:58px;font-weight:900;text-align:center;color:var(--green);margin:38px 0;text-shadow:0 0 32px rgba(184,255,90,.4)}
+.friendRow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.friendRow:last-child{border:0}
+.rowLeft{display:flex;align-items:center;gap:12px}
+.avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:#071007;background:linear-gradient(135deg,var(--green),var(--green2));box-shadow:0 0 24px rgba(184,255,90,.2)}
+
+.empty{padding:32px 20px;text-align:center;border-radius:30px;border:1px dashed rgba(255,255,255,.22);background:rgba(255,255,255,.04);margin:18px 0}
+
+.nav{
+position:fixed;bottom:12px;left:50%;transform:translateX(-50%);
+width:min(390px,calc(100% - 24px));display:grid;grid-template-columns:repeat(5,1fr);
+padding:10px 6px;border-radius:999px;background:rgba(255,255,255,.09);
+border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(30px) saturate(180%);
+-webkit-backdrop-filter:blur(30px) saturate(180%);
+box-shadow:0 18px 45px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.2)
+}
+.nav button{background:transparent;box-shadow:none;border:0;color:rgba(255,255,255,.52);font-size:12px;margin:0;padding:9px 0}
+.nav button.active{color:var(--green);text-shadow:0 0 18px rgba(184,255,90,.5)}
+
+.toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:99;padding:13px 18px;border-radius:999px;display:none}
+</style>
+</head>
+
+<body>
+<div class="toast glass" id="toast"></div>
+
+<div class="app">
+
+<section id="welcome" class="screen active center">
+  <div class="logo">🌱</div>
+  <h1>Touch<br>Grass</h1>
+  <p>Real streaks. Real friends. Less screen time.</p>
+  <div class="heroPhone glass"><span>🔒</span></div>
+  <button class="primary" onclick="show('signup')">Create Account</button>
+  <button onclick="show('login')">Log In</button>
+</section>
+
+<section id="signup" class="screen">
+  <h1>Create account</h1>
+  <p>Your app starts empty. No fake friends. No fake stats.</p>
+  <input id="signupName" placeholder="Username">
+  <input id="signupEmail" placeholder="Email">
+  <input id="signupPass" type="password" placeholder="Password">
+  <button class="primary" onclick="signup()">Start</button>
+  <button onclick="show('login')">Already have an account</button>
+</section>
+
+<section id="login" class="screen">
+  <h1>Welcome back</h1>
+  <p>Log in with the username saved on this phone.</p>
+  <input id="loginName" placeholder="Username">
+  <button class="primary" onclick="login()">Log In</button>
+  <button onclick="show('signup')">Create account</button>
+</section>
+
+<section id="home" class="screen">
+  <h2 id="greeting">Welcome</h2>
+
+  <div class="card glass center">
+    <div class="bigStreak">🔥</div>
+    <h1><span id="streakDays">0</span> Day Streak</h1>
+    <p id="streakText">Start Grass Mode to begin.</p>
+  </div>
+
+  <button class="primary" onclick="show('grass')">Start Grass Mode</button>
+
+  <div class="statGrid">
+    <div class="stat glass"><p>Offline</p><strong id="offlineStat">0m</strong></div>
+    <div class="stat glass"><p>Points</p><strong id="pointsStat">0</strong></div>
+    <div class="stat glass"><p>Friends</p><strong id="friendsStat">0</strong></div>
+  </div>
+
+  <div class="card glass">
+    <h3>Today</h3>
+    <p id="todayText">No session completed yet.</p>
+  </div>
+</section>
+
+<section id="grass" class="screen">
+  <h1>Grass Mode</h1>
+  <p>Put your phone down. When the timer finishes, your progress saves.</p>
+  <div class="card glass center">
+    <div class="timer" id="timer">10:00</div>
+    <button class="primary" id="startBtn" onclick="startSession()">Begin 10 Minute Session</button>
+    <button onclick="completeSession()">Finish Early</button>
+    <button class="danger" onclick="cancelSession()">Cancel</button>
+  </div>
+</section>
+
+<section id="friends" class="screen">
+  <h1>Friends</h1>
+  <p>Add only real friends by username.</p>
+
+  <div class="card glass">
+    <input id="friendInput" placeholder="Friend username">
+    <button class="primary" onclick="addFriend()">Add Friend</button>
+  </div>
+
+  <div id="friendsList"></div>
+</section>
+
+<section id="streak" class="screen">
+  <h1>Your streak</h1>
+  <div class="card glass center">
+    <div class="bigStreak">🔥</div>
+    <h1><span id="streakBig">0</span> Days</h1>
+    <p id="bestStreak">Best streak: 0 days</p>
+  </div>
+
+  <div class="card glass">
+    <h3>Milestones</h3>
+    <p>3 days 🌱</p>
+    <p>7 days 🔥</p>
+    <p>14 days 🌳</p>
+    <p>30 days 🏆</p>
+  </div>
+</section>
+
+<section id="profile" class="screen">
+  <div class="card glass center">
+    <div class="avatar" style="margin:auto;width:84px;height:84px;font-size:34px" id="profileAvatar">A</div>
+    <h1 id="profileName">@user</h1>
+    <p>Local profile</p>
+  </div>
+
+  <div class="card glass">
+    <p>Total offline time: <strong id="profileOffline">0m</strong></p>
+    <p>Grass points: <strong id="profilePoints">0</strong></p>
+    <p>Friends: <strong id="profileFriends">0</strong></p>
+  </div>
+
+  <button class="danger" onclick="logout()">Log Out</button>
+  <button class="danger" onclick="resetApp()">Reset App Data</button>
+</section>
+
+<nav class="nav" id="nav" style="display:none">
+  <button onclick="show('home')" id="nav-home">Home</button>
+  <button onclick="show('friends')" id="nav-friends">Friends</button>
+  <button onclick="show('grass')" id="nav-grass">Grass</button>
+  <button onclick="show('streak')" id="nav-streak">Streak</button>
+  <button onclick="show('profile')" id="nav-profile">Profile</button>
+</nav>
+
+</div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("touchGrassData")) || null;
+let sessionTimer = null;
+let secondsLeft = 600;
+
+function save(){localStorage.setItem("touchGrassData",JSON.stringify(data))}
+function toast(msg){
+const t=document.getElementById("toast");
+t.textContent=msg;t.style.display="block";
+setTimeout(()=>t.style.display="none",1600)
+}
+function show(id){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+document.getElementById("nav").style.display=data?"grid":"none";
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+const b=document.getElementById("nav-"+id);if(b)b.classList.add("active");
+if(data)render();window.scrollTo(0,0)
+}
+function signup(){
+const username=document.getElementById("signupName").value.trim();
+const email=document.getElementById("signupEmail").value.trim();
+if(!username)return toast("Enter a username");
+data={username,email,streak:0,bestStreak:0,points:0,offlineMinutes:0,friends:[],lastSessionDate:null};
+save();show("home");toast("Account created")
+}
+function login(){
+const username=document.getElementById("loginName").value.trim();
+if(!data)return toast("No account found on this phone");
+if(username&&username!==data.username)return toast("Username does not match");
+show("home")
+}
+function logout(){show("welcome")}
+function resetApp(){
+if(confirm("Delete all local Touch Grass data?")){
+localStorage.removeItem("touchGrassData");data=null;show("welcome")
+}}
+function addFriend(){
+const input=document.getElementById("friendInput");
+const name=input.value.trim();
+if(!name)return toast("Enter a username");
+if(name.toLowerCase()===data.username.toLowerCase())return toast("That is you");
+if(data.friends.some(f=>f.toLowerCase()===name.toLowerCase()))return toast("Already added");
+data.friends.push(name);input.value="";save();render();toast("Friend added")
+}
+function removeFriend(name){
+data.friends=data.friends.filter(f=>f!==name);save();render()
+}
+function startSession(){
+clearInterval(sessionTimer);secondsLeft=600;updateTimer();
+sessionTimer=setInterval(()=>{
+secondsLeft--;updateTimer();
+if(secondsLeft<=0)completeSession()
+},1000);
+toast("Grass Mode started")
+}
+function updateTimer(){
+const m=Math.floor(secondsLeft/60),s=secondsLeft%60;
+document.getElementById("timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")
+}
+function cancelSession(){
+clearInterval(sessionTimer);secondsLeft=600;updateTimer();toast("Session cancelled")
+}
+function completeSession(){
+clearInterval(sessionTimer);
+if(!data)return;
+const today=new Date().toDateString();
+data.offlineMinutes+=10;
+data.points+=25;
+if(data.lastSessionDate!==today){data.streak+=1;data.lastSessionDate=today}
+if(data.streak>data.bestStreak)data.bestStreak=data.streak;
+save();secondsLeft=600;updateTimer();render();toast("Session saved +25 points");show("home")
+}
+function formatMinutes(min){
+if(min<60)return min+"m";
+return Math.floor(min/60)+"h "+(min%60)+"m"
+}
+function safeName(name){return name.replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function render(){
+if(!data)return;
+greeting.textContent="Hey, "+data.username;
+streakDays.textContent=data.streak;
+streakBig.textContent=data.streak;
+offlineStat.textContent=formatMinutes(data.offlineMinutes);
+pointsStat.textContent=data.points;
+friendsStat.textContent=data.friends.length;
+profileOffline.textContent=formatMinutes(data.offlineMinutes);
+profilePoints.textContent=data.points;
+profileFriends.textContent=data.friends.length;
+profileName.textContent="@"+data.username;
+profileAvatar.textContent=data.username[0].toUpperCase();
+bestStreak.textContent="Best streak: "+data.bestStreak+" days";
+streakText.textContent=data.streak===0?"Start Grass Mode to begin.":"Keep it going today.";
+todayText.textContent=data.lastSessionDate===new Date().toDateString()?"You completed a Grass Mode session today.":"No session completed yet.";
+
+if(data.friends.length===0){
+friendsList.innerHTML=`<div class="empty"><h3>No friends yet</h3><p>Add your first real friend to start a squad streak.</p></div>`;
+}else{
+friendsList.innerHTML=data.friends.map(name=>{
+const n=safeName(name);
+return `<div class="friendRow">
+<div class="rowLeft"><div class="avatar">${n[0].toUpperCase()}</div><div><strong>@${n}</strong><p>Friend added</p></div></div>
+<button class="small danger" onclick="removeFriend('${n}')">Remove</button>
+</div>`
+}).join("")
+}}
+if(data)show("home");else show("welcome");
+</script>
+</body>
+</html>
